@@ -11,29 +11,79 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  Color? _backgroundColor;
+  Color? _mainBackgroundColor;
+  Color? _secondBackgroundColor;
+  var _isScreenPressed = false;
+  Offset _pressedCenterOffset = Offset.zero;
 
-  void _changeBackgroundColor() {
+  void _onDragStart(DragStartDetails details) {
     setState(() {
-      _backgroundColor = ColorGenerator.generateColor();
+      if (!_isScreenPressed) {
+        _secondBackgroundColor = ColorGenerator.generateColor();
+        _isScreenPressed = true;
+      }
+      _pressedCenterOffset = details.globalPosition;
+    });
+  }
+
+  void _onDragEnd(DragEndDetails _) {
+    setState(() {
+      _isScreenPressed = false;
+      _mainBackgroundColor = _secondBackgroundColor;
+    });
+  }
+
+  void _onTapUp(TapUpDetails _) {
+    setState(() {
+      _mainBackgroundColor = ColorGenerator.generateColor();
+    });
+  }
+
+  void _onDragUpdate(DragUpdateDetails details) {
+    setState(() {
+      _pressedCenterOffset = details.globalPosition;
     });
   }
 
   @override
   void initState() {
     super.initState();
-    _backgroundColor = ColorGenerator.generateColor();
+    _mainBackgroundColor = ColorGenerator.generateColor();
   }
 
   @override
   Widget build(BuildContext context) {
+    final _windowSize = MediaQuery.of(context).size;
+    final _gradientAlignment = Alignment(
+      _pressedCenterOffset.dx / (_windowSize.width / 2) - 1,
+      _pressedCenterOffset.dy / (_windowSize.height / 2) - 1,
+    );
+
     return Scaffold(
-      backgroundColor: _backgroundColor,
       body: GestureDetector(
         behavior: HitTestBehavior.opaque,
-        onTap: _changeBackgroundColor,
-        child: const Center(
-          child: Text(
+        onVerticalDragStart: _onDragStart,
+        onHorizontalDragStart: _onDragStart,
+        onVerticalDragEnd: _onDragEnd,
+        onHorizontalDragEnd: _onDragEnd,
+        onTapUp: _onTapUp,
+        onHorizontalDragUpdate: _onDragUpdate,
+        onVerticalDragUpdate: _onDragUpdate,
+        child: Container(
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: _mainBackgroundColor,
+            gradient: _isScreenPressed
+                ? RadialGradient(
+                    center: _gradientAlignment,
+                    colors: [
+                      _secondBackgroundColor ?? Colors.transparent,
+                      _mainBackgroundColor ?? Colors.transparent,
+                    ],
+                  )
+                : null,
+          ),
+          child: const Text(
             'Hey there',
           ),
         ),
