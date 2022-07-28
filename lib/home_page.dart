@@ -11,6 +11,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  Color? _textColor;
   Color? _mainBackgroundColor;
   Color? _secondBackgroundColor;
   var _isScreenPressed = false;
@@ -36,6 +37,7 @@ class _HomePageState extends State<HomePage> {
   void _onTapUp(TapUpDetails _) {
     setState(() {
       _mainBackgroundColor = ColorGenerator.generateColor();
+      _textColor = ColorGenerator.generateColor();
     });
   }
 
@@ -83,8 +85,9 @@ class _HomePageState extends State<HomePage> {
                   )
                 : null,
           ),
-          child: const Text(
+          child: Text(
             'Hey there',
+            style: TextStyle(color: _textColor),
           ),
         ),
       ),

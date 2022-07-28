@@ -7,13 +7,17 @@ class ColorGenerator {
 
   /// Generates random color.
   static Color generateColor() {
-    final randomColorIndex = Random().nextInt(Colors.primaries.length);
-    final randomColor = Colors.primaries[randomColorIndex];
 
-    // Another way to generate random color
+    const _maxGeneratedValue = 0x100;
 
-    // const _maxGeneratedValue = 0x100000000;
-    // final randomColor = Color(Random().nextInt(_maxGeneratedValue));
+    final _random = Random();
+
+    final _alphaColor = _random.nextInt(_maxGeneratedValue);
+    final _redColor = _random.nextInt(_maxGeneratedValue);
+    final _greenColor = _random.nextInt(_maxGeneratedValue);
+    final _blueColor = _random.nextInt(_maxGeneratedValue);
+    final randomColor =
+        Color.fromARGB(_alphaColor, _redColor, _greenColor, _blueColor);
 
     return randomColor;
   }
